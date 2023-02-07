@@ -16,6 +16,19 @@ int vulkan_init(vulcano_struct *vulcano_state)
     creation_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     creation_info.pApplicationInfo = &app_info;
 
+    unsigned int vulkan_extensions_count = 0;
+    SDL_Vulkan_GetInstanceExtensions(vulcano_state->vulcano_window, &vulkan_extensions_count, NULL);
+
+    const char** vulkan_extensions = malloc(sizeof(char*) * vulkan_extensions_count);
+    SDL_Vulkan_GetInstanceExtensions(vulcano_state->vulcano_window, &vulkan_extensions_count, vulkan_extensions);
+
+    printf("[vulkan] init: Available extensions:\n");
+
+    for (size_t i = 0; i < vulkan_extensions_count; i++)
+    {
+        printf("[vulkan]  #%lu > %s\n", i, vulkan_extensions[i]);
+    }
+
     retval = 0;
 
     return retval;
