@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include <vulkan/vulkan.h>
+#include <vulcano.h>
 #include <termcolour.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -9,6 +10,8 @@ int main(int argc, char **argv)
 {
     int retval = 1;
     bool run = true;
+
+    vulcano_struct *vulcano_state;
 
     // SDL Window
     SDL_Window *vulcano_window = NULL;
@@ -33,25 +36,37 @@ int main(int argc, char **argv)
 
         if (vulcano_window != NULL)
         {
-            while (run)
+            vulcano_state = malloc(sizeof(vulcano_struct));
+
+            if (vulcano_state != NULL)
             {
-                while (SDL_PollEvent(&vulcano_event))
+                while (run)
                 {
-                    switch (vulcano_event.type)
+                    while (SDL_PollEvent(&vulcano_event))
                     {
-                        case SDL_WINDOWEVENT:
+                        switch (vulcano_event.type)
                         {
-                            switch (vulcano_event.window.event)
+                            case SDL_WINDOWEVENT:
                             {
-                                case SDL_WINDOWEVENT_CLOSE:
-                                    SDL_Quit();
-                                    run = false;
-                                    break;
+                                switch (vulcano_event.window.event)
+                                {
+                                    case SDL_WINDOWEVENT_CLOSE:
+                                        SDL_Quit();
+                                        free(vulcano_state);
+                                        run = false;
+                                        printf("[vulcano] main: User-requested exit\n");
+                                        break;
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
                 }
+            }
+            else
+            {
+                SDL_Quit();
+                printf(RED "[vulcano] main: Failed to allocate Vulcano's state structure, exiting...\n" NORMAL);
             }
         }
         else
