@@ -25,4 +25,4 @@ foreach (TMP_PATH ${SRC_FILES})
 endforeach(TMP_PATH)
 
 add_executable(vulcano ${SRC_FILES})
-target_link_libraries(vulcano ${GLFW_LIBRARIES} ${GLEW_LIBRARIES} ${SDL2_LIBRARIES} ${VULKAN_LIBRARIES})
+target_link_libraries(vulcano glfw vulkan ${GLEW_LIBRARIES} ${SDL2_LIBRARIES})
