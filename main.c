@@ -1,4 +1,3 @@
-#include <SDL.h>
 #include <vulkan/vulkan.h>
 #include <vulcano.h>
 #include <termcolour.h>
@@ -13,9 +12,6 @@ int main(int argc, char **argv)
 
     vulcano_struct *vulcano_state;
 
-    // SDL Window
-    SDL_Window *vulcano_window = NULL;
-
     // SDL Event
     SDL_Event vulcano_event;
 
@@ -23,9 +19,13 @@ int main(int argc, char **argv)
     printf("[vulcano] main: Compiled on %s %s\n", __DATE__, __TIME__);
     printf("[sdl] main: Initializing SDL...\n");
     
-    if (SDL_Init(SDL_INIT_VIDEO) == 0)
+    vulcano_state = malloc(sizeof(vulcano_struct));
+
+    if (vulcano_state != NULL)
     {
-        vulcano_window = SDL_CreateWindow(
+        if (SDL_Init(SDL_INIT_VIDEO) == 0)
+        {
+            vulcano_state->vulcano_window = SDL_CreateWindow(
             "Vulcano (SDL2) - Vulkan",
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
@@ -34,49 +34,55 @@ int main(int argc, char **argv)
             SDL_WINDOW_VULKAN
             );
 
-        if (vulcano_window != NULL)
-        {
-            vulcano_state = malloc(sizeof(vulcano_struct));
-
-            if (vulcano_state != NULL)
+            if (vulcano_state->vulcano_window != NULL)
             {
-                while (run)
+                if (vulkan_init(vulcano_state) == 0)
                 {
-                    while (SDL_PollEvent(&vulcano_event))
+                    while (run)
                     {
-                        switch (vulcano_event.type)
+                        while (SDL_PollEvent(&vulcano_event))
                         {
-                            case SDL_WINDOWEVENT:
+                            switch (vulcano_event.type)
                             {
-                                switch (vulcano_event.window.event)
+                                case SDL_WINDOWEVENT:
                                 {
-                                    case SDL_WINDOWEVENT_CLOSE:
-                                        SDL_Quit();
-                                        free(vulcano_state);
-                                        run = false;
-                                        printf("[vulcano] main: User-requested exit\n");
-                                        break;
+                                    switch (vulcano_event.window.event)
+                                    {
+                                        case SDL_WINDOWEVENT_CLOSE:
+                                            SDL_Quit();
+                                            free(vulcano_state);
+                                            run = false;
+                                            printf("[vulcano] main: User-requested exit\n");
+                                            break;
+                                    }
+                                    break;
                                 }
-                                break;
                             }
                         }
                     }
                 }
+                else
+                {
+                    printf(RED "[vulcano] main: Failed to initialize Vulkan, exiting...\n" NORMAL);
+                    SDL_Quit();
+                    free(vulcano_state);
+                }
             }
             else
             {
+                printf(RED "[sdl] main: Failed to create the SDL window, exiting...\n" NORMAL);
                 SDL_Quit();
-                printf(RED "[vulcano] main: Failed to allocate Vulcano's state structure, exiting...\n" NORMAL);
+                free(vulcano_state);
             }
         }
         else
         {
-            printf(RED "[sdl] main: Failed to create the SDL window, exiting...\n" NORMAL);
+            printf(RED "[sdl] main: Failed to initialize SDL, exiting...\n" NORMAL);
         }
     }
     else
     {
-        printf(RED "[sdl] main: Failed to initialize SDL, exiting...\n" NORMAL);
+        printf(RED "[vulcano] main: Failed to allocate Vulcano's state structure, exiting...\n" NORMAL);
     }
 
     return retval;
