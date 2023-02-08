@@ -8,6 +8,10 @@ int vulkan_init(vulcano_struct *vulcano_state)
     {
         retval = 0;
     }
+    else
+    {
+        printf(RED "[vulkan] init: Failed to create Vulkan Instance, exiting...\n" NORMAL);
+    }
 
     return retval;
 }
