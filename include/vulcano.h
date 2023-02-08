@@ -8,11 +8,23 @@
 #include <stdint.h>
 
 typedef struct {
-    VkInstance instance;
-    unsigned int vulkan_extensions_count;
-    VkExtensionProperties *vulkan_extensions;
-    const char** vulkan_instance_extensions;
+    // SDL Window
     SDL_Window *vulcano_window;
+
+    // Vulkan Instance
+    VkInstance instance;
+
+    // Vulkan Extension Count
+    unsigned int vulkan_extensions_count;
+
+    // Vulkan Extensions
+    VkExtensionProperties *vulkan_extensions;
+
+    // Vulkan Instance Extensions
+    const char** vulkan_instance_extensions;
+
+    // Vulkan Physical Devices
+    VkPhysicalDevice *physical_devices;
 } vulcano_struct;
 
 /* Function Definitions */
