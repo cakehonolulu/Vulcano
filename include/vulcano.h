@@ -6,6 +6,8 @@
 
 typedef struct {
     VkInstance instance;
+    unsigned int vulkan_extensions_count;
+    const char** vulkan_extensions;
     SDL_Window *vulcano_window;
 } vulcano_struct;
 

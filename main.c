@@ -49,6 +49,7 @@ int main(int argc, char **argv)
                                     switch (vulcano_event.window.event)
                                     {
                                         case SDL_WINDOWEVENT_CLOSE:
+                                            vulkan_exit(vulcano_state);
                                             SDL_Quit();
                                             free(vulcano_state);
                                             run = false;

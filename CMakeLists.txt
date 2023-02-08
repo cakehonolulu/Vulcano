@@ -6,6 +6,11 @@ set(CMAKE_C_FLAGS_MINSIZEREL "-Wall -Wextra -O0")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "-Wall -Wextra -g -O2")
 set(CMAKE_C_FLAGS_RELEASE "-Wall -Wextra -O2")
 
+if (ASAN)
+add_compile_options(-fsanitize=address -g)
+add_link_options(-fsanitize=address)
+endif()
+
 find_package(Vulkan REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED)
