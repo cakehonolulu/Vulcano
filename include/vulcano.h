@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <SDL_vulkan.h>
 #include <termcolour.h>
+#include <stdbool.h>
 #include <stdint.h>
 
 typedef struct {
@@ -15,4 +16,4 @@ typedef struct {
 int vulkan_init(vulcano_struct *vulcano_state);
 int vulkan_exit(vulcano_struct *vulcano_state);
 
-int vk_create_instance(vulcano_struct *vulcano_state);
+VkInstance vk_create_instance(vulcano_struct *vulcano_state, bool *vulkan_error);
