@@ -3,7 +3,8 @@
 VkInstance vk_create_instance(vulcano_struct *vulcano_state, bool *vulkan_error)
 {
     VkInstance ret = {0};
-    
+    size_t vulkan_extensions_size = 0;
+   
     VkApplicationInfo app_info = {0};
     app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     app_info.pNext = NULL;
@@ -20,6 +21,8 @@ VkInstance vk_create_instance(vulcano_struct *vulcano_state, bool *vulkan_error)
         *vulkan_error = true;
         goto vk_create_instance_end;
     }
+
+    vulkan_extensions_size = vulcano_state->vulkan_extensions_count;
 
     // Allocate space for the extensions information
     vulcano_state->vulkan_extensions = malloc(sizeof(VkExtensionProperties) * vulcano_state->vulkan_extensions_count);
@@ -38,8 +41,6 @@ VkInstance vk_create_instance(vulcano_struct *vulcano_state, bool *vulkan_error)
     {
         printf(YELLOW "[vulkan] #%lu > %s (Ver. %d)" NORMAL "\n", i, vulcano_state->vulkan_extensions[i].extensionName, vulcano_state->vulkan_extensions[i].specVersion);
     }
-
-    free(vulcano_state->vulkan_extensions);
 
     if (SDL_Vulkan_GetInstanceExtensions(vulcano_state->vulcano_window, &vulcano_state->vulkan_extensions_count, NULL) != SDL_TRUE)
     {
@@ -75,15 +76,17 @@ VkInstance vk_create_instance(vulcano_struct *vulcano_state, bool *vulkan_error)
     creation_info.ppEnabledExtensionNames = vulcano_state->vulkan_instance_extensions;
 
     // Check if we have Vulkan Validation Layer Support
-    for (size_t i = 0; i < vulcano_state->vulkan_extensions_count; i++)
+    for (size_t i = 0; i < vulkan_extensions_size; i++)
     {
-        if (strcmp(vulcano_state->vulkan_instance_extensions[i], vulkan_wanted_layers[0]) == 0)
+        if (strcmp(vulcano_state->vulkan_extensions[i].extensionName, vulkan_wanted_layers[0]) == 0)
         {
             creation_info.enabledLayerCount = 1;
             creation_info.ppEnabledLayerNames = vulkan_layers;
             printf(YELLOW "[vulkan] vk_create_instance: Enabling Vulkan Validation Layers..." NORMAL "\n");
         }
     }
+
+    free(vulcano_state->vulkan_extensions);
 
     if (vkCreateInstance(&creation_info, NULL, &ret) != VK_SUCCESS)
     {
