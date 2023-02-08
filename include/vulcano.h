@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vulkan/vulkan.h>
 #include <SDL.h>
 #include <SDL_vulkan.h>
@@ -16,5 +18,3 @@ typedef struct {
 /* Function Definitions */
 int vulkan_init(vulcano_struct *vulcano_state);
 int vulkan_exit(vulcano_struct *vulcano_state);
-
-VkInstance vk_create_instance(vulcano_struct *vulcano_state, bool *vulkan_error);
