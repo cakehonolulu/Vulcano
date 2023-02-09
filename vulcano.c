@@ -1,6 +1,7 @@
 #include <vulcano.h>
 #include <vk_instance.h>
 #include <vk_physical.h>
+#include <vk_queue.h>
 
 int vulkan_init(vulcano_struct *vulcano_state)
 {
@@ -14,10 +15,14 @@ int vulkan_init(vulcano_struct *vulcano_state)
     {
         int phys_dev_idx = vk_pick_physical_device(vulcano_state, &vulkan_error);
 
-        VkPhysicalDevice *phys_dev = &vulcano_state->physical_devices[phys_dev_idx];
+        vulcano_state->phys_dev = &vulcano_state->physical_devices[phys_dev_idx];
 
         if (!vulkan_error && phys_dev_idx != -1)
         {
+            uint32_t phys_dev_prop_count = vk_queue_get_prop_count_from_device(vulcano_state->phys_dev);
+
+            vk_queue_get_props_from_device(vulcano_state, phys_dev_prop_count);
+
             retval = 0;
         }
         else
@@ -36,6 +41,9 @@ int vulkan_init(vulcano_struct *vulcano_state)
 int vulkan_exit(vulcano_struct *vulcano_state)
 {
     int retval = 1;
+
+    if (vulcano_state->queue_family_props)
+        free(vulcano_state->queue_family_props);
 
     if (vulcano_state->physical_devices)
         free(vulcano_state->physical_devices);
