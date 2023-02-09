@@ -13,6 +13,10 @@ void vk_pick_physical_device(vulcano_struct *vulcano_state, bool *vulkan_error)
         *vulkan_error = true;
         goto vk_pick_physical_device_end;
     }
+    else
+    {
+        printf(YELLOW "[vulkan] vk_pick_physical_device: Found %d compute devices..." NORMAL "\n", physical_device_cnt);
+    }
 
     vulcano_state->physical_devices = malloc (sizeof(VkPhysicalDevice) * physical_device_cnt);
 
@@ -43,6 +47,10 @@ void vk_pick_physical_device(vulcano_struct *vulcano_state, bool *vulkan_error)
             printf(GREEN "         │  · %s" NORMAL "\n", physical_devices_props[i].deviceName);
             printf(GREEN "         └─ Physical ID" NORMAL "\n");
             printf(GREEN "            · %ld" NORMAL "\n", i);
+        }
+        else
+        {
+            printf(YELLOW "[vulkan] vk_pick_physical_device: Unsupported compute device %d" NORMAL "\n", physical_devices_props[i].deviceType);
         }
     }
 
