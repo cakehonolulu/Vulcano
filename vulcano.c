@@ -12,9 +12,11 @@ int vulkan_init(vulcano_struct *vulcano_state)
     
     if (!vulkan_error)
     {
-        int phys_device = vk_pick_physical_device(vulcano_state, &vulkan_error);
+        int phys_dev_idx = vk_pick_physical_device(vulcano_state, &vulkan_error);
 
-        if (!vulkan_error)
+        VkPhysicalDevice *phys_dev = &vulcano_state->physical_devices[phys_dev_idx];
+
+        if (!vulkan_error && phys_dev_idx != -1)
         {
             retval = 0;
         }
