@@ -12,7 +12,7 @@ int vulkan_init(vulcano_struct *vulcano_state)
     
     if (!vulkan_error)
     {
-        vk_pick_physical_device(vulcano_state, &vulkan_error);
+        int phys_device = vk_pick_physical_device(vulcano_state, &vulkan_error);
 
         if (!vulkan_error)
         {
