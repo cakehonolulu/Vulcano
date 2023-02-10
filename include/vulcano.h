@@ -31,6 +31,9 @@ typedef struct {
 
     // Vulkan Queue Family Properties from a Vulkan's Physical Device
     VkQueueFamilyProperties *queue_family_props;
+
+    // Vulkan's Primary Device
+    VkDevice device;
 } vulcano_struct;
 
 /* Function Definitions */

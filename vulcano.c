@@ -2,6 +2,7 @@
 #include <vk_instance.h>
 #include <vk_physical.h>
 #include <vk_queue.h>
+#include <vk_device.h>
 
 int vulkan_init(vulcano_struct *vulcano_state)
 {
@@ -22,6 +23,8 @@ int vulkan_init(vulcano_struct *vulcano_state)
             uint32_t phys_dev_prop_count = vk_queue_get_prop_count_from_device(vulcano_state->phys_dev);
 
             vk_queue_get_props_from_device(vulcano_state, phys_dev_prop_count);
+
+            vulcano_state->device = vk_create_device(vulcano_state, phys_dev_prop_count);
 
             retval = 0;
         }
