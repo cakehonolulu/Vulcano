@@ -26,6 +26,8 @@ int vulkan_init(vulcano_struct *vulcano_state)
 
             vulcano_state->device = vk_create_device(vulcano_state, phys_dev_prop_count);
 
+            vk_list_device_ext(vulcano_state);
+
             retval = 0;
         }
         else
