@@ -34,6 +34,9 @@ typedef struct {
 
     // Vulkan's Primary Device
     VkDevice device;
+    
+    // Vulkan Surface
+    VkSurfaceKHR surface;
 } vulcano_struct;
 
 /* Function Definitions */

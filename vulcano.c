@@ -37,7 +37,21 @@ int vulkan_init(vulcano_struct *vulcano_state)
 
 	        VkQueue present_queue = vk_graphics_queue_get_presenting(vulcano_state, queue_family_idx, queue_mode);
 
-            retval = 0;
+            SDL_Vulkan_CreateSurface(vulcano_state->vulcano_window,
+                (SDL_vulkanInstance) vulcano_state->instance, (SDL_vulkanSurface *) &vulcano_state->surface);
+
+            VkBool32 vk_surface_support = 0;
+	        
+            vkGetPhysicalDeviceSurfaceSupportKHR(*vulcano_state->phys_dev, queue_family_idx, vulcano_state->surface, &vk_surface_support);
+
+            if (vk_surface_support)
+            {
+                retval = 0;
+            }
+            else
+            {
+                printf(RED "[vulkan] init: Platform doesn't have VkSurfaceKHR support, exiting..." NORMAL "\n");
+            }
         }
         else
         {
