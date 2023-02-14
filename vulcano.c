@@ -47,6 +47,12 @@ int vulkan_exit(vulcano_struct *vulcano_state)
 {
     int retval = 1;
 
+    if (vulcano_state->device)
+        vkDestroyDevice(vulcano_state->device, NULL);
+
+    if (vulcano_state->instance)
+        vkDestroyInstance(vulcano_state->instance, NULL);
+
     if (vulcano_state->queue_family_props)
         free(vulcano_state->queue_family_props);
 
