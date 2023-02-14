@@ -1,6 +1,7 @@
 #include <vulcano.h>
 #include <vk_instance.h>
 #include <vk_physical.h>
+#include <vk_graphics_queue.h>
 #include <vk_queue.h>
 #include <vk_device.h>
 
@@ -27,6 +28,14 @@ int vulkan_init(vulcano_struct *vulcano_state)
             vulcano_state->device = vk_create_device(vulcano_state, phys_dev_prop_count);
 
             vk_list_device_ext(vulcano_state);
+
+            size_t queue_family_idx = vk_graphics_queue_get_family_idx(vulcano_state, phys_dev_prop_count);
+
+            size_t queue_mode = vk_graphics_queue_get_mode(vulcano_state, queue_family_idx);
+
+            VkQueue draw_queue = vk_graphics_queue_get_draw(vulcano_state, queue_family_idx);
+
+	        VkQueue present_queue = vk_graphics_queue_get_presenting(vulcano_state, queue_family_idx, queue_mode);
 
             retval = 0;
         }
