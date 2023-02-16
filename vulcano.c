@@ -70,6 +70,9 @@ int vulkan_exit(vulcano_struct *vulcano_state)
 {
     int retval = 1;
 
+    if (vulcano_state->surface)
+        vkDestroySurfaceKHR(vulcano_state->instance, vulcano_state->surface, NULL);
+
     if (vulcano_state->device)
         vkDestroyDevice(vulcano_state->device, NULL);
 
