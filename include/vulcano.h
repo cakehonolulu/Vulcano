@@ -35,8 +35,23 @@ typedef struct {
     // Vulkan's Primary Device
     VkDevice device;
     
+    size_t vk_queue_family_idx;
+    size_t vk_queue_mode;
+
     // Vulkan Surface
     VkSurfaceKHR surface;
+
+    // Vulkan Surface Capabilities
+    VkSurfaceCapabilitiesKHR vk_surface_capabilities;
+
+    // Vulkan Surface Format
+    VkSurfaceFormatKHR vk_surface_format;
+    VkPresentModeKHR vk_surface_chosen_present;
+
+    // Vulkan's Swapchain
+    VkSwapchainKHR vk_swapchain;
+	VkExtent2D vk_swapchain_chosen;
+
 } vulcano_struct;
 
 /* Function Definitions */
