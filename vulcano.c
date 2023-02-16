@@ -1,5 +1,7 @@
 #include <vulcano.h>
 #include <vk_instance.h>
+#include <vk_image.h>
+#include <vk_framebuffer.h>
 #include <vk_physical.h>
 #include <vk_graphics_queue.h>
 #include <vk_queue.h>
@@ -52,6 +54,10 @@ int vulkan_init(vulcano_struct *vulcano_state)
 
                 vk_swapchain_create(vulcano_state);
 
+                vk_image_prepare(vulcano_state);
+
+                vk_framebuffer_prepare(vulcano_state);
+
                 retval = 0;
             }
             else
@@ -75,6 +81,9 @@ int vulkan_init(vulcano_struct *vulcano_state)
 int vulkan_exit(vulcano_struct *vulcano_state)
 {
     int retval = 1;
+
+    if (vulcano_state->vk_swapchain_imgs)
+        free(vulcano_state->vk_swapchain_imgs);
 
     if (vulcano_state->vk_swapchain)
         vkDestroySwapchainKHR(vulcano_state->device, vulcano_state->vk_swapchain, NULL);

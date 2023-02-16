@@ -52,6 +52,15 @@ typedef struct {
     VkSwapchainKHR vk_swapchain;
 	VkExtent2D vk_swapchain_chosen;
 
+    uint32_t vk_swapchain_img_num;
+
+    VkImage *vk_swapchain_imgs;
+    VkImageView *vk_image_view;
+
+    VkRenderPass vk_render_pass;
+
+    VkFramebuffer *vk_framebuffer;
+
 } vulcano_struct;
 
 /* Function Definitions */
