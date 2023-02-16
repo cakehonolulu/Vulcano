@@ -7,6 +7,7 @@
 #include <vk_queue.h>
 #include <vk_surface.h>
 #include <vk_swapchain.h>
+#include <vk_shader.h>
 #include <vk_device.h>
 
 int vulkan_init(vulcano_struct *vulcano_state)
@@ -58,7 +59,39 @@ int vulkan_init(vulcano_struct *vulcano_state)
 
                 vk_framebuffer_prepare(vulcano_state);
 
-                retval = 0;
+                vk_framebuffer_create(vulcano_state);
+
+                uint32_t vertexShaderSize = 0;
+	            char vertexShaderFileName[] = "triangle.vert";
+	            char *vertexShaderCode = getShaderCode(vertexShaderFileName, &vertexShaderSize);
+
+                if (vertexShaderCode != NULL)
+                {
+                    VkShaderModule vertexShaderModule = createShaderModule(vulcano_state, vertexShaderCode, vertexShaderSize);
+                    
+                    printf(MAGENTA BOLD "[vulkan] init: Vertex Shader Compiled Successfully!" NORMAL "\n");
+
+                    uint32_t fragmentShaderSize = 0;
+                    char fragmentShaderFileName[] = "triangle.frag";
+                    char *fragmentShaderCode = getShaderCode(fragmentShaderFileName, &fragmentShaderSize);
+
+                    if (fragmentShaderCode != NULL)
+                    {
+                        VkShaderModule fragmentShaderModule = createShaderModule(vulcano_state, fragmentShaderCode, fragmentShaderSize);
+                        
+                        printf(MAGENTA BOLD "[vulkan] init: Fragment Shader Compiled Successfully!" NORMAL "\n");
+
+                        retval = 0;
+                    }
+                    else
+                    {
+                        printf(RED "[vulkan] init: Couldn't compile the fragment shaders!" NORMAL "\n");
+                    }
+                }
+                else
+                {
+                    printf(RED "[vulkan] init: Couldn't compile the vertex shaders!" NORMAL "\n");
+                }
             }
             else
             {
