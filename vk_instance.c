@@ -65,17 +65,14 @@ VkInstance vk_create_instance(vulcano_struct *vulcano_state, bool *vulkan_error)
     vkEnumerateInstanceLayerProperties(&vulcano_state->vulkan_layer_ext_cnt, vulcano_state->vulkan_layer_extensions);
 
     printf(BOLD BLUE "[vulkan] vk_create_instance: Listing %d available layer extensions..." NORMAL "\n", vulcano_state->vulkan_layer_ext_cnt);
+    
     for (size_t x = 0; x < vulcano_state->vulkan_layer_ext_cnt; x++)    
     {
-        printf(BLUE "[vulkan] #%lu > %s" NORMAL "\n", x, vulcano_state->vulkan_layer_extensions[x]);
+        printf(BLUE "[vulkan] #%lu > %s" NORMAL "\n", x, vulcano_state->vulkan_layer_extensions[x].layerName);
     }
     
-    const char vulkan_wanted_layers[][VK_MAX_EXTENSION_NAME_SIZE] = {
-		"VK_LAYER_KHRONOS_validation"
-	};
-
 	const char *vulkan_layers[] = {
-		vulkan_wanted_layers[0]
+		"VK_LAYER_KHRONOS_validation"
 	};
 
     VkInstanceCreateInfo creation_info = {0};
@@ -88,9 +85,9 @@ VkInstance vk_create_instance(vulcano_struct *vulcano_state, bool *vulkan_error)
     creation_info.ppEnabledExtensionNames = vulcano_state->vulkan_instance_extensions;
 
     // Check if we have Vulkan Validation Layer Support
-    for (size_t i = 0; i < vulkan_extensions_size; i++)
+    for (size_t i = 0; i < vulcano_state->vulkan_layer_ext_cnt; i++)
     {
-        if (strcmp(vulcano_state->vulkan_extensions[i].extensionName, vulkan_wanted_layers[0]) == 0)
+        if (strcmp(vulcano_state->vulkan_layer_extensions[i].layerName, vulkan_layers[0]) == 0)
         {
             creation_info.enabledLayerCount = 1;
             creation_info.ppEnabledLayerNames = vulkan_layers;
@@ -100,11 +97,43 @@ VkInstance vk_create_instance(vulcano_struct *vulcano_state, bool *vulkan_error)
 
     free(vulcano_state->vulkan_extensions);
 
-    if (vkCreateInstance(&creation_info, NULL, &ret) != VK_SUCCESS)
+    switch (vkCreateInstance(&creation_info, NULL, &ret))
     {
-        printf(YELLOW "[vulkan] vk_create_instance: vkCreateInstance failed..." NORMAL "\n");
-        *vulkan_error = true;
+        case VK_ERROR_OUT_OF_HOST_MEMORY:
+            printf("vkCreateInstance: Error VK_ERROR_OUT_OF_HOST_MEMORY\n");
+            *vulkan_error = true;
+            break;
+
+        case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+            printf("vkCreateInstance: Error VK_ERROR_OUT_OF_DEVICE_MEMORY\n");
+            *vulkan_error = true;
+            break;
+
+        case VK_ERROR_INITIALIZATION_FAILED:
+            printf("vkCreateInstance: Error VK_ERROR_INITIALIZATION_FAILED\n");
+            *vulkan_error = true;
+            break;
+
+        case VK_ERROR_LAYER_NOT_PRESENT:
+            printf("vkCreateInstance: Error VK_ERROR_LAYER_NOT_PRESENT\n");
+            *vulkan_error = true;
+            break;
+
+        case VK_ERROR_EXTENSION_NOT_PRESENT:
+            printf("vkCreateInstance: Error VK_ERROR_EXTENSION_NOT_PRESENT\n");
+            *vulkan_error = true;
+            break;
+
+        case VK_ERROR_INCOMPATIBLE_DRIVER:
+            printf("vkCreateInstance: Error VK_ERROR_INCOMPATIBLE_DRIVER\n");
+            *vulkan_error = true;
+            break;
+
+        default:
+            break;
+
     }
+
 
 vk_create_instance_end:
     return ret;
