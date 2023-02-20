@@ -58,6 +58,18 @@ VkInstance vk_create_instance(vulcano_struct *vulcano_state, bool *vulkan_error)
         goto vk_create_instance_end;
     }
 
+    vkEnumerateInstanceLayerProperties(&vulcano_state->vulkan_layer_ext_cnt, NULL);
+
+    vulcano_state->vulkan_layer_extensions = malloc(sizeof(VkLayerProperties) * vulcano_state->vulkan_layer_ext_cnt);
+
+    vkEnumerateInstanceLayerProperties(&vulcano_state->vulkan_layer_ext_cnt, vulcano_state->vulkan_layer_extensions);
+
+    printf(BOLD BLUE "[vulkan] vk_create_instance: Listing %d available layer extensions..." NORMAL "\n", vulcano_state->vulkan_layer_ext_cnt);
+    for (size_t x = 0; x < vulcano_state->vulkan_layer_ext_cnt; x++)    
+    {
+        printf(BLUE "[vulkan] #%lu > %s" NORMAL "\n", x, vulcano_state->vulkan_layer_extensions[x]);
+    }
+    
     const char vulkan_wanted_layers[][VK_MAX_EXTENSION_NAME_SIZE] = {
 		"VK_LAYER_KHRONOS_validation"
 	};

@@ -23,6 +23,10 @@ typedef struct {
     // Vulkan Instance Extensions
     const char** vulkan_instance_extensions;
 
+    uint32_t vulkan_layer_ext_cnt;
+
+    VkLayerProperties *vulkan_layer_extensions;
+
     // Vulkan Physical Devices
     VkPhysicalDevice *physical_devices;
 
