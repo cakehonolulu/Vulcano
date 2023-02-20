@@ -20,7 +20,7 @@ void vk_swapchain_create(vulcano_struct *vulcano_state)
 	}
     else
     {
-		vulcano_state->vk_swapchain_chosen.height = vk_fb_w;
+		vulcano_state->vk_swapchain_chosen.height = vk_fb_h;
 	}
 
     uint32_t vk_image_layer_array = 1;
