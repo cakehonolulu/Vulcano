@@ -65,6 +65,12 @@ typedef struct {
 
     VkFramebuffer *vk_framebuffer;
 
+    char *vertexShaderCode;
+    char *fragmentShaderCode;
+
+    VkShaderModule vertexShaderModule;
+    VkShaderModule fragmentShaderModule;
+
 } vulcano_struct;
 
 /* Function Definitions */

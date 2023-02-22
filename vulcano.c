@@ -63,21 +63,21 @@ int vulkan_init(vulcano_struct *vulcano_state)
 
                 uint32_t vertexShaderSize = 0;
 	            char vertexShaderFileName[] = "triangle.vert";
-	            char *vertexShaderCode = getShaderCode(vertexShaderFileName, &vertexShaderSize);
+	            vulcano_state->vertexShaderCode = getShaderCode(vertexShaderFileName, &vertexShaderSize);
 
-                if (vertexShaderCode != NULL)
+                if (vulcano_state->vertexShaderCode != NULL)
                 {
-                    VkShaderModule vertexShaderModule = createShaderModule(vulcano_state, vertexShaderCode, vertexShaderSize);
+                    vulcano_state->vertexShaderModule = createShaderModule(vulcano_state, vulcano_state->vertexShaderCode, vertexShaderSize);
                     
                     printf(MAGENTA BOLD "[vulkan] init: Vertex Shader Compiled Successfully!" NORMAL "\n");
 
                     uint32_t fragmentShaderSize = 0;
                     char fragmentShaderFileName[] = "triangle.frag";
-                    char *fragmentShaderCode = getShaderCode(fragmentShaderFileName, &fragmentShaderSize);
+                    vulcano_state->fragmentShaderCode = getShaderCode(fragmentShaderFileName, &fragmentShaderSize);
 
-                    if (fragmentShaderCode != NULL)
+                    if (vulcano_state->fragmentShaderCode != NULL)
                     {
-                        VkShaderModule fragmentShaderModule = createShaderModule(vulcano_state, fragmentShaderCode, fragmentShaderSize);
+                        vulcano_state->fragmentShaderModule = createShaderModule(vulcano_state, vulcano_state->fragmentShaderCode, fragmentShaderSize);
                         
                         printf(MAGENTA BOLD "[vulkan] init: Fragment Shader Compiled Successfully!" NORMAL "\n");
 
@@ -115,6 +115,41 @@ int vulkan_exit(vulcano_struct *vulcano_state)
 {
     int retval = 1;
 
+    if (vulcano_state->vertexShaderCode)
+        free(vulcano_state->vertexShaderCode);
+
+    if (vulcano_state->fragmentShaderCode)
+        free(vulcano_state->fragmentShaderCode);
+
+    if (vulcano_state->fragmentShaderModule)
+        vkDestroyShaderModule(vulcano_state->device, vulcano_state->fragmentShaderModule, NULL);
+
+    if (vulcano_state->vertexShaderModule)
+        vkDestroyShaderModule(vulcano_state->device, vulcano_state->vertexShaderModule, NULL);
+
+    if (vulcano_state->vk_framebuffer)
+    {
+        for (size_t i = 0; i < vulcano_state->vk_swapchain_img_num; i++)
+        {
+            vkDestroyFramebuffer(vulcano_state->device, vulcano_state->vk_framebuffer[i], NULL);
+        }
+
+        free(vulcano_state->vk_framebuffer);
+    }
+
+    if (vulcano_state->vk_render_pass)
+        vkDestroyRenderPass(vulcano_state->device, vulcano_state->vk_render_pass, NULL);
+
+    if (vulcano_state->vk_image_view)
+    {
+        for (size_t i = 0; i < vulcano_state->vk_swapchain_img_num; i++)
+        {
+            vkDestroyImageView(vulcano_state->device, vulcano_state->vk_image_view[i], NULL);
+        }
+
+        free(vulcano_state->vk_image_view);
+    }
+
     if (vulcano_state->vk_swapchain_imgs)
         free(vulcano_state->vk_swapchain_imgs);
 
@@ -129,7 +164,7 @@ int vulkan_exit(vulcano_struct *vulcano_state)
 
     if (vulcano_state->instance)
         vkDestroyInstance(vulcano_state->instance, NULL);
-
+        
     if (vulcano_state->queue_family_props)
         free(vulcano_state->queue_family_props);
 
@@ -138,6 +173,9 @@ int vulkan_exit(vulcano_struct *vulcano_state)
 
     if (vulcano_state->vulkan_instance_extensions)
         free(vulcano_state->vulkan_instance_extensions);
+
+    if (vulcano_state->vulkan_layer_extensions)
+        free(vulcano_state->vulkan_layer_extensions);
 
     retval = 0;
 
