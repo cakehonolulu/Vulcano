@@ -26,15 +26,15 @@ int vulkan_init(vulcano_struct *vulcano_state)
 
         if (!vulkan_error && phys_dev_idx != -1)
         {
-            uint32_t phys_dev_prop_count = vk_queue_get_prop_count_from_device(vulcano_state->phys_dev);
+            uint32_t queue_family_number = vk_queue_get_prop_count_from_device(vulcano_state->phys_dev);
 
-            vk_queue_get_props_from_device(vulcano_state, phys_dev_prop_count);
+            vk_queue_get_props_from_device(vulcano_state, queue_family_number);
 
-            vulcano_state->device = vk_create_device(vulcano_state, phys_dev_prop_count);
+            vulcano_state->device = vk_create_device(vulcano_state, queue_family_number);
 
             vk_list_device_ext(vulcano_state);
 
-            vulcano_state->vk_queue_family_idx = vk_graphics_queue_get_family_idx(vulcano_state, phys_dev_prop_count);
+            vulcano_state->vk_queue_family_idx = vk_graphics_queue_get_family_idx(vulcano_state, queue_family_number);
 
             vulcano_state->vk_queue_mode = vk_graphics_queue_get_mode(vulcano_state, vulcano_state->vk_queue_family_idx);
 

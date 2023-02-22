@@ -1,35 +1,31 @@
 #include <vk_device.h>
 
-VkDevice vk_create_device(vulcano_struct *vulcano_state, uint32_t prop_count)
+VkDevice vk_create_device(vulcano_struct *vulcano_state, uint32_t queue_family_number)
 {
     VkDevice device = { 0 };
 
-    VkDeviceQueueCreateInfo *dev_queue_info = malloc(sizeof(VkDeviceQueueCreateInfo) * prop_count);
-	float **dev_queue_prio = malloc(sizeof(float *) * prop_count);
+    VkDeviceQueueCreateInfo *queue_create_info = malloc(sizeof(VkDeviceQueueCreateInfo) * queue_family_number);
+	float **queue_priorities = malloc(sizeof(float *) * queue_family_number);
 
-	for (uint32_t i = 0; i < prop_count; i++)
+	for (uint32_t i = 0; i < queue_family_number; i++)
     {
-		dev_queue_prio[i] = malloc(sizeof(float) * vulcano_state->queue_family_props[i].queueCount);
+		queue_priorities[i] = malloc(sizeof(float) * vulcano_state->queue_family_props[i].queueCount);
 
 		for (uint32_t j = 0; j < vulcano_state->queue_family_props[i].queueCount; j++)
         {
-			dev_queue_prio[i][j] = 1.0f;
+			queue_priorities[i][j] = 1.0f;
 		}
 
-		dev_queue_info[i].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		dev_queue_info[i].pNext = NULL;
-		dev_queue_info[i].flags = 0;
-		dev_queue_info[i].queueFamilyIndex = i;
-		dev_queue_info[i].queueCount = vulcano_state->queue_family_props[i].queueCount;
-		dev_queue_info[i].pQueuePriorities = dev_queue_prio[i];
+		queue_create_info[i].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queue_create_info[i].pNext = NULL;
+		queue_create_info[i].flags = 0;
+		queue_create_info[i].queueFamilyIndex = i;
+		queue_create_info[i].queueCount = vulcano_state->queue_family_props[i].queueCount;
+		queue_create_info[i].pQueuePriorities = queue_priorities[i];
 	}
-
-    const char vulkan_wanted_vulkan_extensions[][VK_MAX_EXTENSION_NAME_SIZE] = {
-		"VK_KHR_swapchain"
-	};
-	
+  
     const char *vulkan_extensions[] = {
-		vulkan_wanted_vulkan_extensions[0]
+		"VK_KHR_swapchain"
 	};
 
 	VkPhysicalDeviceFeatures physicalDeviceFeatures;
@@ -39,8 +35,8 @@ VkDevice vk_create_device(vulcano_struct *vulcano_state, uint32_t prop_count)
 		VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 		NULL,
 		0,
-		prop_count,
-		dev_queue_info,
+		queue_family_number,
+		queue_create_info,
 		0,
 		NULL,
 		1,
@@ -50,16 +46,16 @@ VkDevice vk_create_device(vulcano_struct *vulcano_state, uint32_t prop_count)
 
 	vkCreateDevice(*vulcano_state->phys_dev, &deviceCreateInfo, NULL, &device);
 
-	for (uint32_t i = 0; i < prop_count; i++)
+	for (uint32_t i = 0; i < queue_family_number; i++)
     {
-		free(dev_queue_prio[i]);
+		free(queue_priorities[i]);
 	}
 
-    if (dev_queue_prio)
-        free(dev_queue_prio);
+    if (queue_priorities)
+        free(queue_priorities);
 
-    if (dev_queue_info)
-        free(dev_queue_info);
+    if (queue_create_info)
+        free(queue_create_info);
 
     return device;
 }
