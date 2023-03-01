@@ -38,6 +38,8 @@ int vulkan_init(vulcano_struct *vulcano_state)
 
             vulcano_state->vk_queue_mode = vk_graphics_queue_get_mode(vulcano_state, vulcano_state->vk_queue_family_idx);
 
+            vulcano_state->vk_image_array_layers = 1;
+
             VkQueue draw_queue = vk_graphics_queue_get_draw(vulcano_state, vulcano_state->vk_queue_family_idx);
 
 	        VkQueue present_queue = vk_graphics_queue_get_presenting(vulcano_state, vulcano_state->vk_queue_family_idx, vulcano_state->vk_queue_mode);

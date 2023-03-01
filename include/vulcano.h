@@ -59,6 +59,7 @@ typedef struct {
     uint32_t vk_swapchain_img_num;
 
     VkImage *vk_swapchain_imgs;
+    size_t vk_image_array_layers;
     VkImageView *vk_image_view;
 
     VkRenderPass vk_render_pass;

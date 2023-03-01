@@ -20,7 +20,7 @@ void vk_image_prepare(vulcano_struct *vulcano_state)
 		0,
 		1,
 		0,
-		vulcano_state->vk_swapchain_img_num
+		vulcano_state->vk_image_array_layers
 	};
 
 	VkImageViewCreateInfo *vk_image_view_create_info = malloc(sizeof(VkImageViewCreateInfo) * vulcano_state->vk_swapchain_img_num);
