@@ -74,6 +74,10 @@ typedef struct {
 
     VkPipelineLayout vk_pipeline_layout;
     VkPipeline vk_pipeline;
+
+    VkCommandPool vk_command_pool;
+
+    VkCommandBuffer *vk_command_buf;
 } vulcano_struct;
 
 /* Function Definitions */

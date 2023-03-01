@@ -1,6 +1,7 @@
 #include <vulcano.h>
 #include <vk_instance.h>
 #include <vk_image.h>
+#include <vk_command.h>
 #include <vk_framebuffer.h>
 #include <vk_physical.h>
 #include <vk_graphics_queue.h>
@@ -86,6 +87,8 @@ int vulkan_init(vulcano_struct *vulcano_state)
 
                         vk_create_pipeline(vulcano_state);
 
+                        vk_command_pool_init(vulcano_state);
+
                         retval = 0;
                     }
                     else
@@ -119,6 +122,15 @@ int vulkan_init(vulcano_struct *vulcano_state)
 int vulkan_exit(vulcano_struct *vulcano_state)
 {
     int retval = 1;
+
+    if (vulcano_state->vk_command_buf)
+    {
+        vkFreeCommandBuffers(vulcano_state->device, vulcano_state->vk_command_pool, vulcano_state->vk_swapchain_img_num, vulcano_state->vk_command_buf);
+	    free(vulcano_state->vk_command_buf);
+    }
+
+    if (vulcano_state->vk_command_pool)
+        vkDestroyCommandPool(vulcano_state->device, vulcano_state->vk_command_pool, NULL);
 
     if (vulcano_state->vk_pipeline)
         vkDestroyPipeline(vulcano_state->device, vulcano_state->vk_pipeline, NULL);
