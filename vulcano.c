@@ -10,6 +10,7 @@
 #include <vk_swapchain.h>
 #include <vk_shader.h>
 #include <vk_pipeline.h>
+#include <vk_sync.h>
 #include <vk_device.h>
 
 int vulkan_init(vulcano_struct *vulcano_state)
@@ -89,6 +90,8 @@ int vulkan_init(vulcano_struct *vulcano_state)
 
                         vk_command_pool_init(vulcano_state);
 
+                        vk_sync_setup(vulcano_state);
+
                         retval = 0;
                     }
                     else
@@ -122,6 +125,40 @@ int vulkan_init(vulcano_struct *vulcano_state)
 int vulkan_exit(vulcano_struct *vulcano_state)
 {
     int retval = 1;
+
+    if (vulcano_state->vk_back_fences)
+        free(vulcano_state->vk_back_fences);
+
+    if (vulcano_state->vk_front_fences)
+    {
+        for (size_t i = 0; i < vulcano_state->vk_max_frames; i++)
+        {
+            vkDestroyFence(vulcano_state->device, vulcano_state->vk_front_fences[i], NULL);
+	    }
+
+        free(vulcano_state->vk_front_fences);
+    }
+
+
+    if (vulcano_state->vk_wait_semaphore)
+    {
+        for (size_t i = 0; i < vulcano_state->vk_max_frames; i++)
+        {
+            vkDestroySemaphore(vulcano_state->device, vulcano_state->vk_wait_semaphore[i], NULL);
+	    }
+
+        free(vulcano_state->vk_wait_semaphore);
+    }
+
+    if (vulcano_state->vk_signal_semaphore)
+    {
+        for (size_t i = 0; i < vulcano_state->vk_max_frames; i++)
+        {
+            vkDestroySemaphore(vulcano_state->device, vulcano_state->vk_signal_semaphore[i], NULL);
+        }
+
+        free(vulcano_state->vk_signal_semaphore);
+    }
 
     if (vulcano_state->vk_command_buf)
     {

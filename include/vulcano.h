@@ -78,6 +78,12 @@ typedef struct {
     VkCommandPool vk_command_pool;
 
     VkCommandBuffer *vk_command_buf;
+
+    size_t vk_max_frames;
+    VkSemaphore *vk_wait_semaphore;
+    VkSemaphore *vk_signal_semaphore;
+    VkFence *vk_front_fences;
+    VkFence *vk_back_fences;
 } vulcano_struct;
 
 /* Function Definitions */
