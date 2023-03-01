@@ -64,7 +64,7 @@ int vulkan_init(vulcano_struct *vulcano_state)
                 vk_framebuffer_create(vulcano_state);
 
                 uint32_t vertexShaderSize = 0;
-	            char vertexShaderFileName[] = "triangle.vert";
+	            char vertexShaderFileName[] = "frag_shader.spv";
 	            vulcano_state->vertexShaderCode = getShaderCode(vertexShaderFileName, &vertexShaderSize);
 
                 if (vulcano_state->vertexShaderCode != NULL)
@@ -74,7 +74,7 @@ int vulkan_init(vulcano_struct *vulcano_state)
                     printf(MAGENTA BOLD "[vulkan] init: Vertex Shader Compiled Successfully!" NORMAL "\n");
 
                     uint32_t fragmentShaderSize = 0;
-                    char fragmentShaderFileName[] = "triangle.frag";
+                    char fragmentShaderFileName[] = "vert_shader.spv";
                     vulcano_state->fragmentShaderCode = getShaderCode(fragmentShaderFileName, &fragmentShaderSize);
 
                     if (vulcano_state->fragmentShaderCode != NULL)

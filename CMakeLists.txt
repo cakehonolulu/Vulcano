@@ -30,4 +30,24 @@ foreach (TMP_PATH ${SRC_FILES})
 endforeach(TMP_PATH)
 
 add_executable(vulcano ${SRC_FILES})
+
+file(GLOB GLSL_SOURCE_FILES
+    "frag_shader.frag"
+    "vert_shader.vert"
+)
+
+foreach(GLSL ${GLSL_SOURCE_FILES})
+  get_filename_component(FILE_NAME ${GLSL} NAME_WE)
+  set(SPIRV "${FILE_NAME}.spv")
+  add_custom_command(
+    OUTPUT ${SPIRV}
+    COMMAND glslangValidator -V ${GLSL} -o ${SPIRV}
+    DEPENDS ${GLSL})
+  list(APPEND SPIRV_BINARY_FILES ${SPIRV})
+endforeach(GLSL)
+
+add_custom_target(glsl_compile DEPENDS ${SPIRV_BINARY_FILES})
+
+add_dependencies(vulcano glsl_compile)
+
 target_link_libraries(vulcano glfw vulkan ${GLEW_LIBRARIES} ${SDL2_LIBRARIES})
