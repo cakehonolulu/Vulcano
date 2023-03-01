@@ -43,9 +43,9 @@ int vulkan_init(vulcano_struct *vulcano_state)
 
             vulcano_state->vk_image_array_layers = 1;
 
-            VkQueue draw_queue = vk_graphics_queue_get_draw(vulcano_state, vulcano_state->vk_queue_family_idx);
+            vulcano_state->draw_queue = vk_graphics_queue_get_draw(vulcano_state, vulcano_state->vk_queue_family_idx);
 
-	        VkQueue present_queue = vk_graphics_queue_get_presenting(vulcano_state, vulcano_state->vk_queue_family_idx, vulcano_state->vk_queue_mode);
+	        vulcano_state->present_queue = vk_graphics_queue_get_presenting(vulcano_state, vulcano_state->vk_queue_family_idx, vulcano_state->vk_queue_mode);
 
             SDL_Vulkan_CreateSurface(vulcano_state->vulcano_window,
                 (SDL_vulkanInstance) vulcano_state->instance, (SDL_vulkanSurface *) &vulcano_state->surface);
@@ -240,4 +240,82 @@ int vulkan_exit(vulcano_struct *vulcano_state)
     retval = 0;
 
     return retval;
+}
+
+void render(vulcano_struct *vulcano_state)
+{
+    bool run = true;
+	uint32_t current_frame = 0;
+
+    // SDL Event
+    SDL_Event vulcano_event;
+
+    while (run)
+    {
+        vkWaitForFences(vulcano_state->device, 1, &vulcano_state->vk_front_fences[current_frame], VK_TRUE, UINT64_MAX);
+		uint32_t image_index = 0;
+
+		vkAcquireNextImageKHR(vulcano_state->device, vulcano_state->vk_swapchain, UINT64_MAX, vulcano_state->vk_wait_semaphore[current_frame], NULL, &image_index);
+
+		if(vulcano_state->vk_back_fences[image_index] != NULL)
+        {
+            // FIXME
+			//vkWaitForFences(vulcano_state->device, 1, &vulcano_state->vk_back_fences[image_index], VK_TRUE, UINT64_MAX);
+		}
+		vulcano_state->vk_back_fences[image_index] = vulcano_state->vk_front_fences[current_frame];
+
+		VkPipelineStageFlags pipeline_flags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+
+		VkSubmitInfo submitInfo = {
+			VK_STRUCTURE_TYPE_SUBMIT_INFO,
+			NULL,
+			1,
+			&vulcano_state->vk_wait_semaphore[current_frame],
+			&pipeline_flags,
+			1,
+			&vulcano_state->vk_command_buf[image_index],
+			1,
+			&vulcano_state->vk_signal_semaphore[current_frame]
+		};
+
+		vkResetFences(vulcano_state->device, 1, &vulcano_state->vk_front_fences[current_frame]);
+		vkQueueSubmit(vulcano_state->draw_queue, 1, &submitInfo, vulcano_state->vk_front_fences[current_frame]);
+
+		VkPresentInfoKHR present_info = {
+			VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+			NULL,
+			1,
+			&vulcano_state->vk_signal_semaphore[current_frame],
+			1,
+			&vulcano_state->vk_swapchain,
+			&image_index,
+			NULL
+		};
+		vkQueuePresentKHR(vulcano_state->present_queue, &present_info);
+
+		current_frame = (current_frame + 1) % vulcano_state->vk_max_frames;
+
+        while (SDL_PollEvent(&vulcano_event))
+        {
+            switch (vulcano_event.type)
+            {
+                case SDL_WINDOWEVENT:
+                {
+                    switch (vulcano_event.window.event)
+                    {
+                        case SDL_WINDOWEVENT_CLOSE:
+                            vulkan_exit(vulcano_state);
+                            SDL_Quit();
+                            free(vulcano_state);
+                            run = false;
+                            printf("[vulcano] main: User-requested exit\n");
+                            break;
+                    }
+                    break;
+                }
+            }
+        }
+
+	    vkDeviceWaitIdle(vulcano_state->device);
+    }
 }

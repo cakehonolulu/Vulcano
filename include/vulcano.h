@@ -48,6 +48,9 @@ typedef struct {
     // Vulkan Surface Capabilities
     VkSurfaceCapabilitiesKHR vk_surface_capabilities;
 
+    VkQueue draw_queue;
+    VkQueue present_queue;
+
     // Vulkan Surface Format
     VkSurfaceFormatKHR vk_surface_format;
     VkPresentModeKHR vk_surface_chosen_present;
@@ -89,3 +92,4 @@ typedef struct {
 /* Function Definitions */
 int vulkan_init(vulcano_struct *vulcano_state);
 int vulkan_exit(vulcano_struct *vulcano_state);
+void render(vulcano_struct *vulcano_state);

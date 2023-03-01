@@ -36,6 +36,6 @@ void vk_sync_setup(vulcano_struct *vulcano_state)
 
     for(size_t i = 0; i < vulcano_state->vk_max_frames; i++)
     {
-		vulcano_state->vk_back_fences[i] = VK_NULL_HANDLE;
+		vulcano_state->vk_back_fences[i] = NULL;
 	}
 }

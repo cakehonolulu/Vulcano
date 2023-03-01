@@ -8,12 +8,8 @@
 int main(int argc, char **argv)
 {
     int retval = 1;
-    bool run = true;
 
     vulcano_struct *vulcano_state;
-
-    // SDL Event
-    SDL_Event vulcano_event;
 
     printf("[vulcano] main: Vulcano 0.1\n");
     printf("[vulcano] main: Compiled on %s %s\n", __DATE__, __TIME__);
@@ -38,29 +34,7 @@ int main(int argc, char **argv)
             {
                 if (vulkan_init(vulcano_state) == 0)
                 {
-                    while (run)
-                    {
-                        while (SDL_PollEvent(&vulcano_event))
-                        {
-                            switch (vulcano_event.type)
-                            {
-                                case SDL_WINDOWEVENT:
-                                {
-                                    switch (vulcano_event.window.event)
-                                    {
-                                        case SDL_WINDOWEVENT_CLOSE:
-                                            vulkan_exit(vulcano_state);
-                                            SDL_Quit();
-                                            free(vulcano_state);
-                                            run = false;
-                                            printf("[vulcano] main: User-requested exit\n");
-                                            break;
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    render(vulcano_state);
                 }
                 else
                 {
