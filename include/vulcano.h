@@ -72,6 +72,8 @@ typedef struct {
     VkShaderModule vertexShaderModule;
     VkShaderModule fragmentShaderModule;
 
+    VkPipelineLayout vk_pipeline_layout;
+    VkPipeline vk_pipeline;
 } vulcano_struct;
 
 /* Function Definitions */

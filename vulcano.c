@@ -8,6 +8,7 @@
 #include <vk_surface.h>
 #include <vk_swapchain.h>
 #include <vk_shader.h>
+#include <vk_pipeline.h>
 #include <vk_device.h>
 
 int vulkan_init(vulcano_struct *vulcano_state)
@@ -64,7 +65,7 @@ int vulkan_init(vulcano_struct *vulcano_state)
                 vk_framebuffer_create(vulcano_state);
 
                 uint32_t vertexShaderSize = 0;
-	            char vertexShaderFileName[] = "frag_shader.spv";
+	            char vertexShaderFileName[] = "vert_shader.spv";
 	            vulcano_state->vertexShaderCode = getShaderCode(vertexShaderFileName, &vertexShaderSize);
 
                 if (vulcano_state->vertexShaderCode != NULL)
@@ -74,7 +75,7 @@ int vulkan_init(vulcano_struct *vulcano_state)
                     printf(MAGENTA BOLD "[vulkan] init: Vertex Shader Compiled Successfully!" NORMAL "\n");
 
                     uint32_t fragmentShaderSize = 0;
-                    char fragmentShaderFileName[] = "vert_shader.spv";
+                    char fragmentShaderFileName[] = "frag_shader.spv";
                     vulcano_state->fragmentShaderCode = getShaderCode(fragmentShaderFileName, &fragmentShaderSize);
 
                     if (vulcano_state->fragmentShaderCode != NULL)
@@ -82,6 +83,8 @@ int vulkan_init(vulcano_struct *vulcano_state)
                         vulcano_state->fragmentShaderModule = createShaderModule(vulcano_state, vulcano_state->fragmentShaderCode, fragmentShaderSize);
                         
                         printf(MAGENTA BOLD "[vulkan] init: Fragment Shader Compiled Successfully!" NORMAL "\n");
+
+                        vk_create_pipeline(vulcano_state);
 
                         retval = 0;
                     }
@@ -116,6 +119,12 @@ int vulkan_init(vulcano_struct *vulcano_state)
 int vulkan_exit(vulcano_struct *vulcano_state)
 {
     int retval = 1;
+
+    if (vulcano_state->vk_pipeline)
+        vkDestroyPipeline(vulcano_state->device, vulcano_state->vk_pipeline, NULL);
+
+    if (vulcano_state->vk_pipeline_layout)
+        vkDestroyPipelineLayout(vulcano_state->device, vulcano_state->vk_pipeline_layout, NULL);;
 
     if (vulcano_state->vertexShaderCode)
         free(vulcano_state->vertexShaderCode);
