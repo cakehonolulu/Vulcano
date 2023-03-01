@@ -31,8 +31,9 @@ size_t vk_graphics_queue_get_family_idx(vulcano_struct *vulcano_state, uint32_t 
 
 size_t vk_graphics_queue_get_mode(vulcano_struct *vulcano_state, size_t queue_idx)
 {
-    return (vulcano_state->queue_family_props[queue_idx].queueCount > 1 ? 0 : 
-        (vulcano_state->queue_family_props[queue_idx].queueCount == 1 ? 1 : 2));
+	// TODO: Double-check
+    return (vulcano_state->queue_family_props[queue_idx].queueCount > 1 ? 1 : 
+        (vulcano_state->queue_family_props[queue_idx].queueCount == 1 ? 0 : 2));
 }
 
 VkQueue vk_graphics_queue_get_draw(vulcano_struct *vulcano_state, uint32_t queue_family_idx)
