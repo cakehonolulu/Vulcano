@@ -93,6 +93,10 @@ typedef struct {
 
     VkDeviceMemory vertexBufferMemory;
 
+    VkBuffer indexBuffer;
+
+    VkDeviceMemory indexBufferMemory;
+
     uint32_t vertex_ct;
 
     VkVertexInputBindingDescription *vbindingdesc;

@@ -169,6 +169,9 @@ int vulkan_exit(vulcano_struct *vulcano_state)
 	    free(vulcano_state->vk_command_buf);
     }
 
+    if (vulcano_state->indexBufferMemory)
+        vkFreeMemory(vulcano_state->device, vulcano_state->indexBufferMemory, NULL);
+
     if (vulcano_state->vertexBufferMemory)
         vkFreeMemory(vulcano_state->device, vulcano_state->vertexBufferMemory, NULL);
 
@@ -180,6 +183,9 @@ int vulkan_exit(vulcano_struct *vulcano_state)
 
     if (vulcano_state->vk_command_pool)
         vkDestroyCommandPool(vulcano_state->device, vulcano_state->vk_command_pool, NULL);
+
+    if (vulcano_state->indexBuffer)
+        vkDestroyBuffer(vulcano_state->device, vulcano_state->indexBuffer, NULL);
 
     if (vulcano_state->vertexBuffer)
         vkDestroyBuffer(vulcano_state->device, vulcano_state->vertexBuffer, NULL);
