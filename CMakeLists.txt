@@ -29,6 +29,14 @@ foreach (TMP_PATH ${SRC_FILES})
     endif ()
 endforeach(TMP_PATH)
 
+set (EXCLUDE_DIR "/external/")
+foreach (TMP_PATH ${SRC_FILES})
+    string (FIND ${TMP_PATH} ${EXCLUDE_DIR} EXCLUDE_DIR_FOUND)
+    if (NOT ${EXCLUDE_DIR_FOUND} EQUAL -1)
+        list (REMOVE_ITEM SRC_FILES ${TMP_PATH})
+    endif ()
+endforeach(TMP_PATH)
+
 add_executable(vulcano ${SRC_FILES})
 
 file(GLOB GLSL_SOURCE_FILES
@@ -50,4 +58,6 @@ add_custom_target(glsl_compile DEPENDS ${SPIRV_BINARY_FILES})
 
 add_dependencies(vulcano glsl_compile)
 
-target_link_libraries(vulcano glfw vulkan ${GLEW_LIBRARIES} ${SDL2_LIBRARIES} cglm m)
+target_link_libraries(vulcano glfw vulkan ${GLEW_LIBRARIES} ${SDL2_LIBRARIES} cglm_headers)
+
+add_subdirectory(external/cglm/ EXCLUDE_FROM_ALL)
