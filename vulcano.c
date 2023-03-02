@@ -5,6 +5,7 @@
 #include <vk_framebuffer.h>
 #include <vk_physical.h>
 #include <vk_graphics_queue.h>
+#include <vk_buffer.h>
 #include <vk_queue.h>
 #include <vk_surface.h>
 #include <vk_swapchain.h>
@@ -88,6 +89,8 @@ int vulkan_init(vulcano_struct *vulcano_state)
 
                         vk_create_pipeline(vulcano_state);
 
+                        vk_buffer_create(vulcano_state);
+
                         vk_command_pool_init(vulcano_state);
 
                         vk_sync_setup(vulcano_state);
@@ -166,8 +169,20 @@ int vulkan_exit(vulcano_struct *vulcano_state)
 	    free(vulcano_state->vk_command_buf);
     }
 
+    if (vulcano_state->vertexBufferMemory)
+        vkFreeMemory(vulcano_state->device, vulcano_state->vertexBufferMemory, NULL);
+
+    if (vulcano_state->vattribdesc)
+        free(vulcano_state->vattribdesc);
+
+    if (vulcano_state->vbindingdesc)
+        free(vulcano_state->vbindingdesc);
+
     if (vulcano_state->vk_command_pool)
         vkDestroyCommandPool(vulcano_state->device, vulcano_state->vk_command_pool, NULL);
+
+    if (vulcano_state->vertexBuffer)
+        vkDestroyBuffer(vulcano_state->device, vulcano_state->vertexBuffer, NULL);
 
     if (vulcano_state->vk_pipeline)
         vkDestroyPipeline(vulcano_state->device, vulcano_state->vk_pipeline, NULL);
@@ -257,12 +272,12 @@ void render(vulcano_struct *vulcano_state)
 
 		vkAcquireNextImageKHR(vulcano_state->device, vulcano_state->vk_swapchain, UINT64_MAX, vulcano_state->vk_wait_semaphore[current_frame], NULL, &image_index);
 
-		if(vulcano_state->vk_back_fences[image_index] != NULL)
-        {
+		//if(vulcano_state->vk_back_fences[image_index] != NULL)
+        //{
             // FIXME
 			//vkWaitForFences(vulcano_state->device, 1, &vulcano_state->vk_back_fences[image_index], VK_TRUE, UINT64_MAX);
-		}
-		vulcano_state->vk_back_fences[image_index] = vulcano_state->vk_front_fences[current_frame];
+		//}
+		//vulcano_state->vk_back_fences[image_index] = vulcano_state->vk_front_fences[current_frame];
 
 		VkPipelineStageFlags pipeline_flags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
@@ -295,6 +310,8 @@ void render(vulcano_struct *vulcano_state)
 
 		current_frame = (current_frame + 1) % vulcano_state->vk_max_frames;
 
+	    vkDeviceWaitIdle(vulcano_state->device);
+
         while (SDL_PollEvent(&vulcano_event))
         {
             switch (vulcano_event.type)
@@ -315,7 +332,5 @@ void render(vulcano_struct *vulcano_state)
                 }
             }
         }
-
-	    vkDeviceWaitIdle(vulcano_state->device);
     }
 }

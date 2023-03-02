@@ -6,7 +6,7 @@
 void vk_create_pipeline(vulcano_struct *vulcano_state);
 VkPipelineShaderStageCreateInfo vk_config_vshader_info(vulcano_struct *vulcano_state, const char *shader_entrypoint);
 VkPipelineShaderStageCreateInfo vk_config_fshader_info(vulcano_struct *vulcano_state, const char *shader_entrypoint);
-VkPipelineVertexInputStateCreateInfo vk_config_input_state();
+VkPipelineVertexInputStateCreateInfo vk_config_input_state(vulcano_struct *vulcano_state);
 VkPipelineInputAssemblyStateCreateInfo vk_config_input_assembly_state();
 VkViewport vk_viewport_config(vulcano_struct *vulcano_state);
 VkRect2D vk_scissor_config(vulcano_struct *vulcano_state, uint32_t left, uint32_t right, uint32_t top, uint32_t bottom);

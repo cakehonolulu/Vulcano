@@ -6,6 +6,7 @@
 #include <termcolour.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <cglm/cglm.h>
 
 typedef struct {
     // SDL Window
@@ -87,7 +88,23 @@ typedef struct {
     VkSemaphore *vk_signal_semaphore;
     VkFence *vk_front_fences;
     VkFence *vk_back_fences;
+
+    VkBuffer vertexBuffer;
+
+    VkDeviceMemory vertexBufferMemory;
+
+    uint32_t vertex_ct;
+
+    VkVertexInputBindingDescription *vbindingdesc;
+    VkVertexInputAttributeDescription *vattribdesc;
 } vulcano_struct;
+
+typedef struct {
+    vec2 pos;
+    vec3 color;
+} Vertex;
+
+extern Vertex vertices[];
 
 /* Function Definitions */
 int vulkan_init(vulcano_struct *vulcano_state);

@@ -50,4 +50,4 @@ add_custom_target(glsl_compile DEPENDS ${SPIRV_BINARY_FILES})
 
 add_dependencies(vulcano glsl_compile)
 
-target_link_libraries(vulcano glfw vulkan ${GLEW_LIBRARIES} ${SDL2_LIBRARIES})
+target_link_libraries(vulcano glfw vulkan ${GLEW_LIBRARIES} ${SDL2_LIBRARIES} cglm m)

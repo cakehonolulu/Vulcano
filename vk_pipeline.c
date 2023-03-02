@@ -11,7 +11,7 @@ void vk_create_pipeline(vulcano_struct *vulcano_state)
 		0,
 		NULL
 	};
-	
+
 	vkCreatePipelineLayout(vulcano_state->device, &pipeline_layout_create_info, NULL, &vulcano_state->vk_pipeline_layout);
 
     char shader_entrypoint[] = "main";
@@ -20,7 +20,7 @@ void vk_create_pipeline(vulcano_struct *vulcano_state)
 		vk_config_vshader_info(vulcano_state, shader_entrypoint),
 		vk_config_fshader_info(vulcano_state, shader_entrypoint)
 	};
-	VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = vk_config_input_state();
+	VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = vk_config_input_state(vulcano_state);
 	VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo = vk_config_input_assembly_state();
 	VkViewport viewport = vk_viewport_config(vulcano_state);
 	VkRect2D scissor = vk_scissor_config(vulcano_state, 0, 0, 0, 0);
@@ -86,7 +86,7 @@ VkPipelineShaderStageCreateInfo vk_config_fshader_info(vulcano_struct *vulcano_s
 	return create_info;
 }
 
-VkPipelineVertexInputStateCreateInfo vk_config_input_state()
+VkPipelineVertexInputStateCreateInfo vk_config_input_state(vulcano_struct *vulcano_state)
 {
 	VkPipelineVertexInputStateCreateInfo create_info = {
 		VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -97,6 +97,28 @@ VkPipelineVertexInputStateCreateInfo vk_config_input_state()
 		0,
 		NULL
 	};
+
+	vulcano_state->vbindingdesc = malloc(sizeof(VkVertexInputBindingDescription));
+	vulcano_state->vbindingdesc->binding = 0;
+	vulcano_state->vbindingdesc->stride = sizeof(Vertex);
+	vulcano_state->vbindingdesc->inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+	vulcano_state->vattribdesc = malloc(sizeof(VkVertexInputAttributeDescription) * 2);
+
+	vulcano_state->vattribdesc[0].binding = 0;
+	vulcano_state->vattribdesc[0].location = 0;
+	vulcano_state->vattribdesc[0].format = VK_FORMAT_R32G32_SFLOAT;
+	vulcano_state->vattribdesc[0].offset = offsetof(Vertex, pos);
+
+	vulcano_state->vattribdesc[1].binding = 0;
+	vulcano_state->vattribdesc[1].location = 1;
+	vulcano_state->vattribdesc[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+	vulcano_state->vattribdesc[1].offset = offsetof(Vertex, color);
+
+	create_info.vertexBindingDescriptionCount = 1;
+	create_info.pVertexBindingDescriptions = vulcano_state->vbindingdesc;
+	create_info.vertexAttributeDescriptionCount = 2;
+	create_info.pVertexAttributeDescriptions = vulcano_state->vattribdesc;
 
 	return create_info;
 }

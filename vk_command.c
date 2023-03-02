@@ -50,7 +50,13 @@ void vk_command_pool_init(vulcano_struct *vulcano_state)
 		vkBeginCommandBuffer(vulcano_state->vk_command_buf[i], &vk_cmd_buf_begin_info[i]);
 		vkCmdBeginRenderPass(vulcano_state->vk_command_buf[i], &vk_render_pass_info[i], VK_SUBPASS_CONTENTS_INLINE);
 		vkCmdBindPipeline(vulcano_state->vk_command_buf[i], VK_PIPELINE_BIND_POINT_GRAPHICS, vulcano_state->vk_pipeline);
-		vkCmdDraw(vulcano_state->vk_command_buf[i], 3, 1, 0, 0);
+		
+		VkBuffer vertexBuffers[] = {vulcano_state->vertexBuffer};
+		VkDeviceSize offsets[] = {0};
+		vkCmdBindVertexBuffers(vulcano_state->vk_command_buf[i], 0, 1, vertexBuffers, offsets);
+
+
+		vkCmdDraw(vulcano_state->vk_command_buf[i], vulcano_state->vertex_ct, 1, 0, 0);
 		vkCmdEndRenderPass(vulcano_state->vk_command_buf[i]);
 		vkEndCommandBuffer(vulcano_state->vk_command_buf[i]);
 	}
